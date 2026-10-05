@@ -78,29 +78,6 @@ It contains all original pod-hourly fields plus physical integer columns
 the complete row count, and day/hour coverage before accepting the output.
 The merged file is ignored by Git and should be distributed through UIUC Box.
 
-### Create a cleaned analysis file
-
-After creating the merged Parquet, the following command removes
-`workload_id`, keeps only GPU-requesting rows, and removes rows missing the
-core identifiers/resource measures:
-
-```powershell
-python clean_merged_pod_hourly.py --gpu-only
-```
-
-To require every retained column to be non-null, add
-`--strict-complete-case`. This can remove a large share of the data because
-some utilization fields are frequently missing:
-
-```powershell
-python clean_merged_pod_hourly.py --gpu-only --strict-complete-case
-```
-
-The output is
-`data/asi_opensource_pod_hourly_day0_29_clean.parquet`. The raw and merged
-source files remain unchanged. Do not drop `workload_id` if a later analysis
-needs workload-level grouping or cross-table matching.
-
 Official references:
 
 - [Dataset download](https://github.com/alibaba/clusterdata/blob/master/cluster-trace-gpu-v2026/docs/data_download.md)
