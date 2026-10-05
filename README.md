@@ -1,0 +1,120 @@
+# IS 507 Group Project: Alibaba GPU Cluster Trace
+
+This repository contains the reproducible setup, documentation, and starter
+code for our analysis of the Alibaba Cluster Trace GPU v2026 dataset. The
+project uses the first 30 relative days (`day=0` through `day=29`) of
+`asi_opensource_pod_hourly` and the complete
+`asi_opensource_job_execution_summary` table.
+
+The large raw Parquet files are not stored in Git. The selected pod-hourly data
+contain 720 Parquet files and occupy about 42.64 GiB; the execution summary is
+about 1.11 GiB.
+
+## Repository contents
+
+- `data_pre_process.ipynb`: Traditional Chinese data validation and
+  query-time preprocessing notebook.
+- `r_start.R`: R/Arrow examples for reading one hour, one day, multiple days,
+  and the execution summary without loading everything into memory.
+- `DATA_README.md`: field dictionary, missing-value policy, and joining notes.
+- `download_data.py`: one-command download entry point.
+- `download_and_extract_pod_days.py`: resumable selective downloader for
+  pod-hourly day 0–29.
+- `download_job_summary.py`: resumable downloader for the execution summary.
+- `data/pod_day_ranges_0_29.json`: fixed byte-range manifest for the selected
+  30 days.
+- `data/samples/`: small day-0 sample for testing code only.
+
+## Getting the raw data
+
+### Option A: UIUC Box
+
+The group dataset is available through the UIUC Box folder shared in the group
+chat. Download and extract it so the local structure is:
+
+```text
+data/
+  asi_opensource_pod_hourly/
+    day=0/hour=00/part-000.parquet
+    ...
+    day=29/hour=23/part-000.parquet
+  asi_opensource_job_execution_summary/
+    part-000.parquet
+```
+
+The Box shared URL is intentionally not committed here. Group members should
+use the access-controlled link provided by the team.
+
+### Option B: rebuild from the official Alibaba source
+
+The downloader requests only day 0–29 from the large pod archive and resumes
+after an interrupted connection:
+
+```powershell
+python download_data.py
+```
+
+Expect approximately 44 GiB of downloaded/extracted data. Keep the computer
+awake until the script reports completion. Re-running the command skips valid,
+completed files.
+
+Official references:
+
+- [Dataset download](https://github.com/alibaba/clusterdata/blob/master/cluster-trace-gpu-v2026/docs/data_download.md)
+- [Dataset schema](https://github.com/alibaba/clusterdata/blob/master/cluster-trace-gpu-v2026/docs/schema.md)
+
+## Python setup
+
+Python 3.11 or newer is recommended.
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+Open `data_pre_process.ipynb` and run the cells in order. The notebook reads
+Parquet in place with DuckDB and does not create a second full processed copy.
+
+## R setup
+
+Install the packages once:
+
+```r
+install.packages(c("arrow", "dplyr"))
+```
+
+Then open this repository as the working directory and run `r_start.R`. Keep
+queries lazy: filter, select, or aggregate before calling `collect()`.
+
+## Data policy
+
+- Keep the official raw Parquet files unchanged.
+- Keep the official `snake_case` field names.
+- Treat literal `Unknown`/`unknown` as categories rather than missing values.
+- Do not globally remove rows containing `NA` or apply blanket imputation.
+- Create explicit query-time fields such as `ready_delay_sec_clean` when a
+  research question requires a cleaning rule.
+- Do not raw-join the two large tables. Aggregate both tables to a declared
+  grain, usually `workload_id`, before joining and report match coverage.
+
+## Candidate research questions
+
+1. Which workload characteristics are associated with the probability that a
+   GPU execution becomes ready?
+2. How does execution duration vary by job type, model type, priority class,
+   GPU type, and GPU request size?
+3. How does the GPU-hours used-to-requested ratio vary across workload groups?
+4. How do GPU demand and realized usage vary by relative day and hour?
+5. How do GenAI and non-GenAI workloads differ in resource requests and
+   operational outcomes?
+
+## Important limitations
+
+- `day` is relative to the beginning of the trace and is not a calendar date.
+- Missing `workload_id` values are common, especially in the execution summary.
+- Negative delay values require explicit handling and should not be used as
+  ordinary durations.
+- The small sample files are for code testing and are not representative of
+  the complete dataset.
+
