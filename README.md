@@ -58,6 +58,26 @@ Expect approximately 44 GiB of downloaded/extracted data. Keep the computer
 awake until the script reports completion. Re-running the command skips valid,
 completed files.
 
+### Create one Parquet file for sharing
+
+After all 30 days are present, merge the 720 hourly files into one
+ZSTD-compressed Parquet file:
+
+```powershell
+python merge_pod_hourly.py
+```
+
+The output is:
+
+```text
+data/asi_opensource_pod_hourly_day0_29.parquet
+```
+
+It contains all original pod-hourly fields plus physical integer columns
+`day` (0–29) and `hour` (0–23). The script validates all 720 input partitions,
+the complete row count, and day/hour coverage before accepting the output.
+The merged file is ignored by Git and should be distributed through UIUC Box.
+
 Official references:
 
 - [Dataset download](https://github.com/alibaba/clusterdata/blob/master/cluster-trace-gpu-v2026/docs/data_download.md)
@@ -117,4 +137,3 @@ queries lazy: filter, select, or aggregate before calling `collect()`.
   ordinary durations.
 - The small sample files are for code testing and are not representative of
   the complete dataset.
-

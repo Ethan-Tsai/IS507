@@ -19,6 +19,9 @@ data/.pod_download_chunks/
 data/*.zip
 data/*.zip.*
 data/*.tail
+data/asi_opensource_pod_hourly_day0_29.parquet
+data/asi_opensource_pod_hourly_day0_29.part.parquet
+data/.duckdb_tmp/
 
 # Large raw datasets: obtain from UIUC Box or rebuild with download_data.py
 data/asi_opensource_pod_hourly/
@@ -27,4 +30,3 @@ data/asi_opensource_job_execution_summary/
 # Optional local outputs
 data/processed/
 outputs/
-
