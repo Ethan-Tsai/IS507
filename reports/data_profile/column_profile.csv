@@ -1,0 +1,49 @@
+dataset,column_name,column_type,min,max,approx_unique,avg,std,q25,q50,q75,count,null_percentage
+"pod_hourly (days [0], hours [0])",pod_id,VARCHAR,00001dcdb04cc66c4a4748fb8e9e9989,ffffff76477ac62e023598362cb1fbb4,1451811,,,,,,1179029,0.0
+"pod_hourly (days [0], hours [0])",workload_id,VARCHAR,00004bedaf9d9cc3007aa09554d799f3,ffff314bbc8e3d2a204e522b8d499a37,56785,,,,,,1179029,23.21
+"pod_hourly (days [0], hours [0])",server_id,VARCHAR,0000e52b595d367dd13eebf63ab55737,fffc99e2aeb909eebf98582d754c7c22,31692,,,,,,1179029,0.0
+"pod_hourly (days [0], hours [0])",cluster_id,VARCHAR,1f28e063c4e5e1bc48ff55269617dd2f,da8d7fb8796ea962e14eef38624d8059,12,,,,,,1179029,0.0
+"pod_hourly (days [0], hours [0])",state_public,VARCHAR,Unknown,Unknown,1,,,,,,1179029,0.0
+"pod_hourly (days [0], hours [0])",gpu_spec_public,VARCHAR,A10,XPU-E,13,,,,,,1179029,0.0
+"pod_hourly (days [0], hours [0])",server_gpu_count,BIGINT,1,16,4,4.094347128018056,4.623767964707711,1,2,8,1179029,0.0
+"pod_hourly (days [0], hours [0])",server_cpu_capacity_cores,BIGINT,128,192,2,171.12457115134572,30.00407772697191,128,192,192,1179029,0.0
+"pod_hourly (days [0], hours [0])",priority_class,VARCHAR,HP,Other,3,,,,,,1179029,0.0
+"pod_hourly (days [0], hours [0])",job_type_public,VARCHAR,dev,unknown,5,,,,,,1179029,0.0
+"pod_hourly (days [0], hours [0])",model_type_public,VARCHAR,cv,unknown,6,,,,,,1179029,0.0
+"pod_hourly (days [0], hours [0])",is_genai_request,BOOLEAN,false,true,2,,,,,,1179029,0.0
+"pod_hourly (days [0], hours [0])",gpu_request,DOUBLE,0.0,16.0,49,0.09363801060024778,0.5855282783187433,0.0,0.0,0.0,1179029,0.0
+"pod_hourly (days [0], hours [0])",gpu_mem_request,BIGINT,0,1649267441664,97,8959566890.890934,63078880839.07274,0,0,0,1179029,0.0
+"pod_hourly (days [0], hours [0])",cpu_request_cores,DOUBLE,0.0,192.0,174,4.868030514940685,13.95909425191332,0.19229041811531092,1.0,3.8019606768112246,1179029,0.0
+"pod_hourly (days [0], hours [0])",used_gpu_hours,DOUBLE,0.0,16.0,676,0.08329931499187342,0.5575246015355639,0.0,0.0,0.0,1179029,0.0
+"pod_hourly (days [0], hours [0])",avg_gpu_sm_util,DOUBLE,0.0,855.8745293838069,51519,24.174240971160362,74.50796479312389,0.4769117780571519,4.650025596040532,19.037083112472224,1179029,94.21
+"pod_hourly (days [0], hours [0])",avg_gpu_mem_gib,DOUBLE,0.0,1511.879150390625,42954,54.33632784497237,119.7619387743785,3.123095325501742,12.028135913074426,87.0912852006367,1179029,92.72
+"pod_hourly (days [0], hours [0])",avg_cpu_request_util,DOUBLE,0.0,3072.052622222238,1079406,9.531048507541362,33.354033899924175,0.18530093876010287,0.6629996012197591,1.8034221678957976,1179029,2.99
+"pod_hourly (days [0], hours [0])",avg_memory_util,DOUBLE,-0.9979082266489665,1.499760313985053,1405940,0.20913266452127802,0.22447804061838442,0.015435827835599096,0.12302735078165439,0.3240820505812754,1179029,1.22
+"pod_hourly (days [0], hours [0])",ready_status,BOOLEAN,false,true,2,,,,,,1179029,2.07
+"pod_hourly (days [0], hours [0])",schedule_delay_sec,BIGINT,-1,86366,12971,246.63567363743516,2799.3249625357466,0,0,10,1179029,2.07
+"pod_hourly (days [0], hours [0])",ready_delay_sec,BIGINT,-1,86393,13055,390.2494260309575,4548.255362017579,-1,4,21,1179029,2.07
+"pod_hourly (days [0], hours [0])",day,SMALLINT,0,0,1,0.0,0.0,0,0,0,1179029,0.0
+"pod_hourly (days [0], hours [0])",hour,TINYINT,0,0,1,0.0,0.0,0,0,0,1179029,0.0
+"pod_hourly (days [0], hours [0])",workload_id_clean,VARCHAR,00004bedaf9d9cc3007aa09554d799f3,ffff314bbc8e3d2a204e522b8d499a37,56785,,,,,,1179029,23.21
+"pod_hourly (days [0], hours [0])",workload_id_status,VARCHAR,missing,observed,2,,,,,,1179029,0.0
+"pod_hourly (days [0], hours [0])",schedule_delay_sec_clean,BIGINT,0,86366,12971,246.63889062099452,2799.343002924272,0,0,10,1179029,2.07
+"pod_hourly (days [0], hours [0])",ready_delay_sec_clean,BIGINT,0,86393,13055,550.1335722807934,5390.001223717979,3,7,44,1179029,30.48
+"pod_hourly (days [0], hours [0])",is_gpu_request,BOOLEAN,false,true,2,,,,,,1179029,0.0
+"execution_summary (first 1,000,000 rows)",pod_id,VARCHAR,000000fd8aa4c7e43376df763a92e246,fffff2f4b157d3462fbdd9dcdedbba57,1046500,,,,,,1000000,0.0
+"execution_summary (first 1,000,000 rows)",workload_id,VARCHAR,00018fc32ffe25dd38aba9e152eade64,fffeede5545a3733e8c5f11465b78a7e,38859,,,,,,1000000,88.0
+"execution_summary (first 1,000,000 rows)",server_id,VARCHAR,0000e52b595d367dd13eebf63ab55737,fffbed55d1be808b8dfda159f3c9c447,37010,,,,,,1000000,0.0
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,VARCHAR,A10,XPU-E,15,,,,,,1000000,0.0
+"execution_summary (first 1,000,000 rows)",priority_class,VARCHAR,HP,Other,3,,,,,,1000000,0.0
+"execution_summary (first 1,000,000 rows)",job_type_public,VARCHAR,dev,unknown,6,,,,,,1000000,0.0
+"execution_summary (first 1,000,000 rows)",model_type_public,VARCHAR,cv,unknown,6,,,,,,1000000,0.0
+"execution_summary (first 1,000,000 rows)",is_genai_request,BOOLEAN,false,true,2,,,,,,1000000,0.0
+"execution_summary (first 1,000,000 rows)",gpu_request,DOUBLE,0.01,16.0,41,1.2142905799997252,1.576489390399441,1.0,1.0,1.0,1000000,0.0
+"execution_summary (first 1,000,000 rows)",duration_hours,DOUBLE,0.005555555555555556,1823.9944444444445,13621,5.336078649999804,48.85118220683265,0.12949140585826902,0.42707605921057984,1.5019755043685963,1000000,0.0
+"execution_summary (first 1,000,000 rows)",schedule_delay_sec,BIGINT,-1,86396,11807,451.1068149483979,4508.9050976863655,0,0,70,1000000,0.96
+"execution_summary (first 1,000,000 rows)",ready_delay_sec,BIGINT,-1,86394,13277,543.626522289212,5171.434745464198,-1,-1,13,1000000,0.96
+"execution_summary (first 1,000,000 rows)",ready_status,BOOLEAN,false,true,2,,,,,,1000000,0.96
+"execution_summary (first 1,000,000 rows)",schedule_status,BOOLEAN,false,true,2,,,,,,1000000,0.96
+"execution_summary (first 1,000,000 rows)",workload_id_clean,VARCHAR,00018fc32ffe25dd38aba9e152eade64,fffeede5545a3733e8c5f11465b78a7e,38859,,,,,,1000000,88.0
+"execution_summary (first 1,000,000 rows)",workload_id_status,VARCHAR,missing,observed,2,,,,,,1000000,0.0
+"execution_summary (first 1,000,000 rows)",schedule_delay_sec_clean,BIGINT,0,86396,11807,453.7909239204406,4522.134775513089,0,0,71,1000000,1.55
+"execution_summary (first 1,000,000 rows)",ready_delay_sec_clean,BIGINT,1,86394,13277,1236.8656129657084,7741.252724732294,8,17,206,1000000,56.43

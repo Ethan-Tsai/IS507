@@ -1,0 +1,68 @@
+dataset,column,value,count,percent
+"pod_hourly (days [0], hours [0])",state_public,Unknown,1179029,100.0
+"pod_hourly (days [0], hours [0])",gpu_spec_public,A10,391106,33.17187278684409
+"pod_hourly (days [0], hours [0])",gpu_spec_public,XPU-B,210873,17.885310709066527
+"pod_hourly (days [0], hours [0])",gpu_spec_public,L20,198115,16.803233847513503
+"pod_hourly (days [0], hours [0])",gpu_spec_public,XPU-E,105176,8.920560902233957
+"pod_hourly (days [0], hours [0])",gpu_spec_public,H20,83130,7.050717157932502
+"pod_hourly (days [0], hours [0])",gpu_spec_public,XPU-A,63829,5.413692114443326
+"pod_hourly (days [0], hours [0])",gpu_spec_public,XPU-D,47474,4.026533698492573
+"pod_hourly (days [0], hours [0])",gpu_spec_public,XPU-C,44791,3.7989735621430856
+"pod_hourly (days [0], hours [0])",gpu_spec_public,A100,15969,1.354419611392086
+"pod_hourly (days [0], hours [0])",gpu_spec_public,A800,9632,0.816943433961336
+"pod_hourly (days [0], hours [0])",priority_class,Other,910749,77.24568267616827
+"pod_hourly (days [0], hours [0])",priority_class,HP,243161,20.623835376398713
+"pod_hourly (days [0], hours [0])",priority_class,LP,25119,2.1304819474330148
+"pod_hourly (days [0], hours [0])",job_type_public,unknown,1091345,92.56303280071991
+"pod_hourly (days [0], hours [0])",job_type_public,online_inference,58614,4.971378990677922
+"pod_hourly (days [0], hours [0])",job_type_public,offline_inference,24231,2.0551657338369114
+"pod_hourly (days [0], hours [0])",job_type_public,training,3540,0.30024706771419535
+"pod_hourly (days [0], hours [0])",job_type_public,dev,1299,0.11017540705105643
+"pod_hourly (days [0], hours [0])",model_type_public,unknown,1094709,92.84835233060426
+"pod_hourly (days [0], hours [0])",model_type_public,genai,38151,3.2357982712893407
+"pod_hourly (days [0], hours [0])",model_type_public,rec,36432,3.0900003307806676
+"pod_hourly (days [0], hours [0])",model_type_public,cv,8795,0.7459528137136576
+"pod_hourly (days [0], hours [0])",model_type_public,dev,830,0.07039691135671812
+"pod_hourly (days [0], hours [0])",model_type_public,embedding,112,0.009499342255364371
+"pod_hourly (days [0], hours [0])",is_genai_request,false,1142558,96.90669186254112
+"pod_hourly (days [0], hours [0])",is_genai_request,true,36471,3.093308137458875
+"pod_hourly (days [0], hours [0])",ready_status,true,1025338,86.9646124056321
+"pod_hourly (days [0], hours [0])",ready_status,false,129341,10.970128809384672
+"pod_hourly (days [0], hours [0])",ready_status,<NULL>,24350,2.0652587849832362
+"pod_hourly (days [0], hours [0])",workload_id_status,observed,905400,76.79200426791877
+"pod_hourly (days [0], hours [0])",workload_id_status,missing,273629,23.20799573208123
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,XPU-E,284739,28.4739
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,H20,153284,15.3284
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,XPU-A,141239,14.1239
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,L20,110224,11.0224
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,A10,102350,10.235
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,XPU-C,70839,7.0839
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,XPU-B,50612,5.0612
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,A100,26809,2.6809
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,H20-141GB,20957,2.0957
+"execution_summary (first 1,000,000 rows)",gpu_spec_public,XPU-D,20947,2.0947
+"execution_summary (first 1,000,000 rows)",priority_class,LP,824771,82.4771
+"execution_summary (first 1,000,000 rows)",priority_class,HP,164326,16.4326
+"execution_summary (first 1,000,000 rows)",priority_class,Other,10903,1.0903
+"execution_summary (first 1,000,000 rows)",job_type_public,offline_inference,792970,79.297
+"execution_summary (first 1,000,000 rows)",job_type_public,online_inference,125041,12.5041
+"execution_summary (first 1,000,000 rows)",job_type_public,training,75389,7.5389
+"execution_summary (first 1,000,000 rows)",job_type_public,unknown,4072,0.4072
+"execution_summary (first 1,000,000 rows)",job_type_public,other,1742,0.1742
+"execution_summary (first 1,000,000 rows)",job_type_public,dev,786,0.0786
+"execution_summary (first 1,000,000 rows)",model_type_public,genai,790029,79.0029
+"execution_summary (first 1,000,000 rows)",model_type_public,cv,90028,9.0028
+"execution_summary (first 1,000,000 rows)",model_type_public,rec,72272,7.2272
+"execution_summary (first 1,000,000 rows)",model_type_public,unknown,34828,3.4828
+"execution_summary (first 1,000,000 rows)",model_type_public,embedding,12189,1.2189
+"execution_summary (first 1,000,000 rows)",model_type_public,dev,654,0.0654
+"execution_summary (first 1,000,000 rows)",is_genai_request,true,774729,77.4729
+"execution_summary (first 1,000,000 rows)",is_genai_request,false,225271,22.5271
+"execution_summary (first 1,000,000 rows)",ready_status,false,521127,52.1127
+"execution_summary (first 1,000,000 rows)",ready_status,true,469252,46.9252
+"execution_summary (first 1,000,000 rows)",ready_status,<NULL>,9621,0.9621
+"execution_summary (first 1,000,000 rows)",schedule_status,true,984524,98.4524
+"execution_summary (first 1,000,000 rows)",schedule_status,<NULL>,9633,0.9633
+"execution_summary (first 1,000,000 rows)",schedule_status,false,5843,0.5843
+"execution_summary (first 1,000,000 rows)",workload_id_status,missing,879194,87.9194
+"execution_summary (first 1,000,000 rows)",workload_id_status,observed,120806,12.0806

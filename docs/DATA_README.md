@@ -11,6 +11,10 @@ answer a specific research question.
 This approach is reproducible, avoids doubling disk usage, and preserves the
 original observations.
 
+The latest validated profile results are summarized in
+[`DATA_PROFILE.md`](DATA_PROFILE.md). The corresponding aggregate CSV tables
+are stored under `reports/data_profile/`.
+
 ## Local file layout
 
 ```text
