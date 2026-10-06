@@ -11,8 +11,16 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 POD_FILE = DATA_DIR / "asi_opensource_pod_hourly_day0_29.parquet"
 SUMMARY_FILE = DATA_DIR / "asi_opensource_job_execution_summary.parquet"
+WORKLOAD_LOOKUP_FILE = DATA_DIR / "workload_id_lookup.parquet"
 OUTPUT_ZIP = DATA_DIR / "IS507_alibaba_gpu_data_day0_29.zip"
 TEMP_ZIP = OUTPUT_ZIP.with_suffix(".zip.part")
+
+
+def files_to_package() -> list[Path]:
+    files = [POD_FILE, SUMMARY_FILE]
+    if WORKLOAD_LOOKUP_FILE.exists():
+        files.append(WORKLOAD_LOOKUP_FILE)
+    return files
 
 
 def log(message: str) -> None:
@@ -24,7 +32,7 @@ def zip_is_complete() -> bool:
         return False
     expected = {
         f"data/{path.name}": path.stat().st_size
-        for path in (POD_FILE, SUMMARY_FILE)
+        for path in files_to_package()
     }
     try:
         with zipfile.ZipFile(OUTPUT_ZIP) as archive:
@@ -35,7 +43,8 @@ def zip_is_complete() -> bool:
 
 
 def main() -> None:
-    for path in (POD_FILE, SUMMARY_FILE):
+    required_files = [POD_FILE, SUMMARY_FILE]
+    for path in required_files:
         if not path.exists():
             raise FileNotFoundError(path)
 
@@ -44,8 +53,12 @@ def main() -> None:
         return
 
     TEMP_ZIP.unlink(missing_ok=True)
-    total_gib = sum(path.stat().st_size for path in (POD_FILE, SUMMARY_FILE)) / 1024**3
-    log(f"Packaging two Parquet files ({total_gib:.2f} GiB) with ZIP store mode")
+    package_files = files_to_package()
+    total_gib = sum(path.stat().st_size for path in package_files) / 1024**3
+    log(
+        f"Packaging {len(package_files)} Parquet files "
+        f"({total_gib:.2f} GiB) with ZIP store mode"
+    )
 
     with zipfile.ZipFile(
         TEMP_ZIP,
@@ -53,7 +66,7 @@ def main() -> None:
         compression=zipfile.ZIP_STORED,
         allowZip64=True,
     ) as archive:
-        for path in (POD_FILE, SUMMARY_FILE):
+        for path in package_files:
             log(f"Adding {path.name}")
             archive.write(path, arcname=f"data/{path.name}")
 

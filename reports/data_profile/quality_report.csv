@@ -9,12 +9,12 @@ dataset,metric,count,percent_of_rows
 "pod_hourly (days [0], hours [0])",missing_ready_delay,24350,2.0652587849832362
 "pod_hourly (days [0], hours [0])",negative_ready_delay,334973,28.41092119023366
 "execution_summary (first 1,000,000 rows)",row_count,1000000,100.0
-"execution_summary (first 1,000,000 rows)",unique_pods,989488,98.9488
-"execution_summary (first 1,000,000 rows)",missing_workload_id,879912,87.9912
+"execution_summary (first 1,000,000 rows)",unique_pods,989451,98.9451
+"execution_summary (first 1,000,000 rows)",missing_workload_id,879706,87.9706
 "execution_summary (first 1,000,000 rows)",blank_workload_id,0,0.0
 "execution_summary (first 1,000,000 rows)",missing_duration,0,0.0
 "execution_summary (first 1,000,000 rows)",negative_duration,0,0.0
-"execution_summary (first 1,000,000 rows)",missing_schedule_delay,9617,0.9617
-"execution_summary (first 1,000,000 rows)",negative_schedule_delay,5858,0.5858
-"execution_summary (first 1,000,000 rows)",missing_ready_delay,9617,0.9617
-"execution_summary (first 1,000,000 rows)",negative_ready_delay,554715,55.4715
+"execution_summary (first 1,000,000 rows)",missing_schedule_delay,9600,0.96
+"execution_summary (first 1,000,000 rows)",negative_schedule_delay,5844,0.5844
+"execution_summary (first 1,000,000 rows)",missing_ready_delay,9600,0.96
+"execution_summary (first 1,000,000 rows)",negative_ready_delay,554493,55.4493

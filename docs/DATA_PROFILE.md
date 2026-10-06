@@ -51,7 +51,7 @@ The summary duration distribution is strongly right-skewed:
 
 - Median: about 0.43 hours (26 minutes)
 - 75th percentile: about 1.50 hours
-- 99th percentile: about 72.8 hours
+- 99th percentile: about 69.7 hours
 - Maximum: about 1,824 hours (76 days)
 
 Use medians, quantiles, or `log1p(duration_hours)` rather than relying only on
@@ -69,7 +69,7 @@ about 92.6% of `job_type_public` and 92.8% of `model_type_public` values are
 `unknown`. Only about 3.1% are marked as GenAI requests.
 
 In the summary quick profile, about 82.5% are low priority, 79.3% are offline
-inference jobs, and 77.5% are marked as GenAI requests. These large differences
+inference jobs, and 77.4% are marked as GenAI requests. These large differences
 reflect different table grains and possibly file-order effects in the bounded
 summary profile; they are diagnostic findings, not evidence of a population
 difference between the two tables.

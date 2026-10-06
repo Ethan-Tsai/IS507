@@ -128,6 +128,10 @@ column.
 8. Before analysis, report missing counts/rates, numeric minima and maxima,
    category levels, row grain, and day/hour coverage.
 
+Implementation templates for keeping, filling, dropping, or ordinal-encoding
+`workload_id` are documented in [`PREPROCESSING.md`](PREPROCESSING.md). These
+rules create query-time analysis fields and never overwrite the raw columns.
+
 ## R usage
 
 Open `MID` as the working directory and run [`r_start.R`](../r_start.R). The key
