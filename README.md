@@ -13,17 +13,13 @@ on the data owner's machine as a local backup, but teammates do not need them.
 
 ## Repository contents
 
-- `data_pre_process.ipynb`: Traditional Chinese data validation and
-  query-time preprocessing notebook.
+- `data_pre_process.ipynb`: English validation, query-time preprocessing, and
+  profiling notebook.
 - `r_start.R`: R/Arrow examples for reading one hour, one day, multiple days,
   and the execution summary without loading everything into memory.
-- `DATA_README.md`: field dictionary, missing-value policy, and joining notes.
-- `download_data.py`: one-command download entry point.
-- `download_and_extract_pod_days.py`: resumable selective downloader for
-  pod-hourly day 0–29.
-- `download_job_summary.py`: resumable downloader for the execution summary.
-- `package_team_data.py`: packages the two analysis files into one shareable
-  ZIP without recompressing Parquet.
+- `docs/DATA_README.md`: field dictionary, missing-value policy, and joining
+  notes.
+- `scripts/`: download, merge, and team-package utilities.
 - `data/pod_day_ranges_0_29.json`: fixed byte-range manifest for the selected
   30 days.
 - `data/samples/`: small day-0 sample for testing code only.
@@ -50,7 +46,7 @@ The downloader requests only day 0–29 from the large pod archive and resumes
 after an interrupted connection:
 
 ```powershell
-python download_data.py
+python scripts/download_data.py
 ```
 
 This rebuilds the same two team files while retaining the 720 pod-hourly source
@@ -63,7 +59,7 @@ After all 30 days are present, merge the 720 hourly files into one
 ZSTD-compressed Parquet file:
 
 ```powershell
-python merge_pod_hourly.py
+python scripts/merge_pod_hourly.py
 ```
 
 The output is:
@@ -78,10 +74,9 @@ the complete row count, and day/hour coverage before accepting the output.
 The two single-file datasets are ignored by Git and should be distributed
 through UIUC Box.
 
-The Parquet file already uses ZSTD compression. Uploading the `.parquet` file
-directly is normally faster than creating a ZIP and usually produces almost
-the same file size. If an archive is required, archive only this merged file;
-do not include `.venv/`, the 720 source files, or `.duckdb_tmp/`.
+The Parquet files already use ZSTD compression, so the team ZIP uses store mode
+and contains only the two single-file datasets. It does not include `.venv/`,
+the 720 source files, or temporary files.
 
 `r_start.R` and `data_pre_process.ipynb` read only these two single-file
 datasets. They do not require or inspect the 720 hourly source files.
@@ -89,7 +84,7 @@ datasets. They do not require or inspect the 720 hourly source files.
 To rebuild the one-file team package, run:
 
 ```powershell
-python package_team_data.py
+python scripts/package_team_data.py
 ```
 
 This creates `data/IS507_alibaba_gpu_data_day0_29.zip`. Extract the ZIP into the

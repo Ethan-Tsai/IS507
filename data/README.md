@@ -4,7 +4,7 @@ Large raw Parquet files in this directory are intentionally ignored by Git.
 Obtain them from the team's UIUC Box folder or run:
 
 ```powershell
-python download_data.py
+python scripts/download_data.py
 ```
 
 Expected team analysis layout:

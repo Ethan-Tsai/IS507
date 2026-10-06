@@ -126,7 +126,7 @@ column.
 
 ## R usage
 
-Open `MID` as the working directory and run [`r_start.R`](r_start.R). The key
+Open `MID` as the working directory and run [`r_start.R`](../r_start.R). The key
 idea is to keep Arrow queries lazy:
 
 ```r

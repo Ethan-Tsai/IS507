@@ -9,7 +9,7 @@ import zipfile
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 DOWNLOAD_DIR = DATA_DIR / ".downloads"
 ZIP_PATH = DOWNLOAD_DIR / "asi_opensource_job_execution_summary.zip"

@@ -7,7 +7,7 @@ import zipfile
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 POD_FILE = DATA_DIR / "asi_opensource_pod_hourly_day0_29.parquet"
 SUMMARY_FILE = DATA_DIR / "asi_opensource_job_execution_summary.parquet"

@@ -17,7 +17,7 @@ import zlib
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 MANIFEST_PATH = DATA_DIR / "pod_day_ranges_0_29.json"
 PARTIAL_ZIP = ROOT.parent / "dataset" / "asi_opensource_pod_hourly.zip"

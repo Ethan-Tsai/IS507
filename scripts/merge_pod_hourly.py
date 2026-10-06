@@ -9,7 +9,7 @@ import duckdb
 import pyarrow.parquet as pq
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 INPUT_ROOT = DATA_DIR / "asi_opensource_pod_hourly"
 INPUT_GLOB = (INPUT_ROOT / "day=*" / "hour=*" / "part-000.parquet").as_posix()
@@ -136,4 +136,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
