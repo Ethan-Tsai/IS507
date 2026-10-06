@@ -1,86 +1,82 @@
-# Preprocessing workflow
+# Canonical preprocessing workflow
 
-## Design decision
+## Objective
 
-The two shared Parquet files remain the immutable source of truth. The project
-does not create a second full processed copy because the merged pod table is
-about 33.48 GiB. Cleaning rules are applied through DuckDB views in Python or
-lazy Arrow queries in R.
+`data_pre_process.ipynb` is the single source of preprocessing logic. One run
+creates two canonical Parquet files that already contain the selected policy,
+clean fields, and indicators. Downstream R or DuckDB code reads those files
+directly and does not repeat the preprocessing rules.
 
-This means a policy can be changed tomorrow without downloading, merging, or
-copying the large data again.
+The raw files are never overwritten.
 
-## Standard fields
+## Configuration decisions
 
-The notebook creates analysis views with these additional fields:
+The notebook exposes these settings near the top:
 
-| Field | Meaning |
-|---|---|
-| `workload_id_clean` | Original workload ID after converting blank strings to missing. |
-| `workload_id_status` | `observed` or `missing`. |
-| `workload_id_was_missing` | Boolean indicator retained even when a placeholder is used. |
-| `workload_id_analysis` | Workload ID after applying the selected policy. |
-| `schedule_delay_sec_clean` | Scheduling delay when non-negative; otherwise missing. |
-| `ready_delay_sec_clean` | Ready delay when non-negative; otherwise missing. |
-| `is_gpu_request` | Whether `gpu_request > 0`. |
-
-## Workload-ID policies
-
-Set `WORKLOAD_ID_POLICY` in `data_pre_process.ipynb`, or pass
-`workload_policy` to the R reader.
-
-| Policy | Result | Recommended use |
+| Setting | Default | Meaning |
 |---|---|---|
-| `keep` | Missing IDs remain missing. | Default single-table analysis. |
-| `zero` | Missing IDs become string `"0"` in the analysis field. | Models requiring a visible missing category. |
-| `drop` | Rows missing a workload ID are excluded from the current query only. | Workload-level aggregation or joins. |
-| `ordinal` | Observed IDs receive positive integer codes; missing IDs receive `0`. | Models requiring numeric identifiers. |
+| `WORKLOAD_ID_POLICY` | `"keep"` | Preserve missing IDs in `workload_id_processed`. |
+| `CATEGORICAL_NULL_POLICY` | `"unknown"` | Replace null/blank categorical values only in `*_clean` fields. |
+| `WRITE_PROCESSED_FILES` | `False` | Dry run until all diagnostic results are reviewed. |
+| `OVERWRITE_PROCESSED_FILES` | `False` | Protect an existing canonical output from accidental replacement. |
 
-Neither `zero` nor `ordinal` means that missing records belong to one real
-workload. Always retain `workload_id_was_missing` and avoid treating ordinal
-codes as continuous quantities.
+Allowed workload-ID policies are:
 
-The ordinal option requires a shared lookup file. In the notebook run:
+| Policy | Canonical result | Appropriate use |
+|---|---|---|
+| `keep` | Missing remains missing. | Recommended default; preserves information. |
+| `zero` | Missing becomes string `"0"`. | Algorithms that require an explicit missing category. |
+| `drop` | Rows without an ID are excluded from both processed outputs. | Only when every planned analysis requires a workload ID. |
+| `ordinal` | Known IDs become positive integer codes and missing becomes `0`. | Algorithms requiring numeric identifiers; codes are nominal, not continuous. |
 
-```python
-build_workload_id_lookup()
-create_preprocessed_views("ordinal")
-```
+`drop` can remove a large share of execution-summary rows, so it should be
+selected only after reviewing the notebook's coverage table. `zero` and
+`ordinal` do not imply that all missing records belong to one real workload;
+the `workload_id_missing` indicator must remain available.
 
-This creates only a small mapping file at
-`data/workload_id_lookup.parquet`; it does not create another full dataset.
+## Canonical transformations
 
-## R examples
+All original fields are retained unless the selected `drop` policy removes
+rows. The notebook adds:
 
-```r
-# Keep missing workload IDs (default)
-x <- read_pod(days = 5, hours = 12, workload_policy = "keep")
+| Field | Rule |
+|---|---|
+| `workload_id_clean` | Trim whitespace; convert blank strings to null. |
+| `workload_id_missing` | Boolean indicator based on the cleaned ID. |
+| `workload_id_processed` | Final ID according to `WORKLOAD_ID_POLICY`. |
+| `schedule_delay_sec_clean` | Retain non-negative values; negative values become null. |
+| `ready_delay_sec_clean` | Retain non-negative values; negative values become null. |
+| `duration_hours_clean` | Summary only; retain non-negative values. |
+| categorical `*_clean` fields | Preserve source labels; replace only null/blank values with a documented label. |
+| `is_gpu_request` | Pod only; whether `gpu_request > 0`. |
+| `gpu_utilization_observed` | Pod only; whether SM utilization is present. |
 
-# Use an explicit missing category
-x <- read_pod(days = 5, hours = 12, workload_policy = "zero")
+General preprocessing does not mean-fill durations, delays, utilization,
+outcomes, identifiers, or categories. Model-specific imputation should be fit
+inside the training split to avoid leakage. Large real-world values are
+profiled and retained rather than silently clipped.
 
-# Exclude missing IDs from this query only
-x <- read_pod(days = 5, hours = 12, workload_policy = "drop")
+## Materialization and validation
 
-# Summary sample with the same policy interface
-s <- read_summary(
-  row_limit = 10000,
-  workload_policy = "keep",
-  collect_result = TRUE
-)
-```
+After reviewing the notebook output:
 
-For `ordinal`, first generate the lookup in the notebook. R intentionally
-requires `collect_result = TRUE` for this option so teammates do not
-accidentally trigger an unbounded full-table join.
+1. Set `WORKLOAD_ID_POLICY` to the final decision.
+2. If using `ordinal`, run `build_workload_lookup()` once.
+3. Set `WRITE_PROCESSED_FILES = True`.
+4. Keep `OVERWRITE_PROCESSED_FILES = False` for the first run.
+5. Run the materialization and post-write validation sections.
 
-## Joining the two datasets
+The notebook writes temporary `.part.parquet` files and renames them only after
+DuckDB completes the write. It then reopens the outputs and verifies metadata,
+row counts, and all 720 pod day/hour combinations.
 
-Do not join raw pod-hour rows directly to raw execution-summary rows. First
-choose a grain, aggregate each table independently, and then join the two small
-results. Report:
+To intentionally replace an earlier processed version, first confirm the new
+policy and then set `OVERWRITE_PROCESSED_FILES = True`. The two outputs remain
+the only canonical downstream datasets.
 
-- rows and unique workloads before filtering;
-- rows and unique workloads after requiring an ID;
-- matched workloads after the join;
-- the selected workload-ID policy.
+## Joining the datasets
+
+Do not join raw pod-hour rows directly to execution-summary rows. Choose a
+grain, aggregate both canonical datasets independently (usually by
+`workload_id_processed`), and then join the aggregate tables. Report ID
+coverage and join match coverage with every combined analysis.

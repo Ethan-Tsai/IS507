@@ -1,13 +1,8 @@
 # Local data directory
 
-Large raw Parquet files in this directory are intentionally ignored by Git.
-Obtain them from the team's UIUC Box folder or run:
+Large Parquet and ZIP files are intentionally ignored by Git.
 
-```powershell
-python scripts/download_data.py
-```
-
-Expected team analysis layout:
+Raw preprocessing inputs:
 
 ```text
 data/
@@ -15,9 +10,17 @@ data/
   asi_opensource_job_execution_summary.parquet
 ```
 
-The merged pod file contains physical integer `day` and `hour` columns. The
-data owner may also retain `asi_opensource_pod_hourly/` as a local backup, but
-the shared notebook and R starter do not use that directory.
+Canonical analysis outputs created by `data_pre_process.ipynb`:
 
-`samples/` contains small testing data and is tracked by Git. It must not be
-used to make population-level conclusions.
+```text
+data/processed/
+  asi_opensource_pod_hourly_processed.parquet
+  asi_opensource_job_execution_summary_processed.parquet
+```
+
+Only the two processed files are used by `r_start.R` and downstream analyses.
+Run `python scripts/package_team_data.py` after materialization to create
+`data/IS507_processed_data.zip`.
+
+The tracked `samples/` files are for fast code tests only and must not be used
+for population-level conclusions.

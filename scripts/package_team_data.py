@@ -1,4 +1,4 @@
-"""Package the two team Parquet datasets into one ZIP without recompression."""
+"""Package exactly two canonical processed Parquet files into one ZIP."""
 
 from __future__ import annotations
 
@@ -8,57 +8,52 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT / "data"
-POD_FILE = DATA_DIR / "asi_opensource_pod_hourly_day0_29.parquet"
-SUMMARY_FILE = DATA_DIR / "asi_opensource_job_execution_summary.parquet"
-WORKLOAD_LOOKUP_FILE = DATA_DIR / "workload_id_lookup.parquet"
-OUTPUT_ZIP = DATA_DIR / "IS507_alibaba_gpu_data_day0_29.zip"
+PROCESSED_DIR = ROOT / "data" / "processed"
+POD_FILE = PROCESSED_DIR / "asi_opensource_pod_hourly_processed.parquet"
+SUMMARY_FILE = PROCESSED_DIR / "asi_opensource_job_execution_summary_processed.parquet"
+OUTPUT_ZIP = ROOT / "data" / "IS507_processed_data.zip"
 TEMP_ZIP = OUTPUT_ZIP.with_suffix(".zip.part")
-
-
-def files_to_package() -> list[Path]:
-    files = [POD_FILE, SUMMARY_FILE]
-    if WORKLOAD_LOOKUP_FILE.exists():
-        files.append(WORKLOAD_LOOKUP_FILE)
-    return files
+PACKAGE_FILES = (POD_FILE, SUMMARY_FILE)
 
 
 def log(message: str) -> None:
     print(time.strftime("%Y-%m-%d %H:%M:%S"), message, flush=True)
 
 
+def expected_members() -> dict[str, int]:
+    return {
+        path.relative_to(ROOT).as_posix(): path.stat().st_size
+        for path in PACKAGE_FILES
+    }
+
+
 def zip_is_complete() -> bool:
     if not OUTPUT_ZIP.exists():
         return False
-    expected = {
-        f"data/{path.name}": path.stat().st_size
-        for path in files_to_package()
-    }
     try:
         with zipfile.ZipFile(OUTPUT_ZIP) as archive:
             observed = {item.filename: item.file_size for item in archive.infolist()}
-            return observed == expected and archive.testzip() is None
+            return observed == expected_members() and archive.testzip() is None
     except (OSError, zipfile.BadZipFile):
         return False
 
 
 def main() -> None:
-    required_files = [POD_FILE, SUMMARY_FILE]
-    for path in required_files:
-        if not path.exists():
-            raise FileNotFoundError(path)
+    missing = [path for path in PACKAGE_FILES if not path.exists()]
+    if missing:
+        names = "\n".join(f"- {path}" for path in missing)
+        raise FileNotFoundError(
+            "Canonical processed files are missing. Run data_pre_process.ipynb "
+            f"with WRITE_PROCESSED_FILES=True first:\n{names}"
+        )
 
     if zip_is_complete():
         log(f"Archive already complete: {OUTPUT_ZIP}")
         return
 
     TEMP_ZIP.unlink(missing_ok=True)
-    package_files = files_to_package()
-    total_gib = sum(path.stat().st_size for path in package_files) / 1024**3
-    log(
-        f"Packaging {len(package_files)} Parquet files "
-        f"({total_gib:.2f} GiB) with ZIP store mode"
-    )
+    total_gib = sum(path.stat().st_size for path in PACKAGE_FILES) / 1024**3
+    log(f"Packaging exactly 2 Parquet files ({total_gib:.2f} GiB)")
 
     with zipfile.ZipFile(
         TEMP_ZIP,
@@ -66,9 +61,10 @@ def main() -> None:
         compression=zipfile.ZIP_STORED,
         allowZip64=True,
     ) as archive:
-        for path in package_files:
-            log(f"Adding {path.name}")
-            archive.write(path, arcname=f"data/{path.name}")
+        for path in PACKAGE_FILES:
+            member = path.relative_to(ROOT).as_posix()
+            log(f"Adding {member}")
+            archive.write(path, arcname=member)
 
     TEMP_ZIP.replace(OUTPUT_ZIP)
     if not zip_is_complete():

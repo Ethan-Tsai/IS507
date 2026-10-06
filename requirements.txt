@@ -2,6 +2,6 @@ duckdb>=1.4
 jupyter>=1.0
 matplotlib>=3.8
 nbformat>=5.10
+numpy>=2.0
 pandas>=2.2
 pyarrow>=18
-

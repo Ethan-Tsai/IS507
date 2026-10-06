@@ -1,105 +1,57 @@
-# Data Profile
+# Data profile
 
-## Scope
+## Where the profile is produced
 
-The notebook performs two different levels of validation:
+The complete profile is displayed directly in `data_pre_process.ipynb`. It is
+not exported to CSV. This keeps schema, quality metrics, distributions, and
+preprocessing decisions beside the code and exact run configuration that
+created them.
 
-- **Full-file integrity:** both complete Parquet files are checked using file
-  metadata and the full pod `day`/`hour` coverage.
-- **Quick diagnostic profile:** pod Day 0 / Hour 0 and the first 1,000,000
-  execution-summary rows are profiled for missingness, distributions, and
-  preprocessing decisions.
+The notebook produces:
 
-The quick profile is designed for a fast, reproducible classroom workflow. Its
-percentages describe the selected scope and must not be presented as complete
-30-day population estimates.
+- full-file inventory and pod day/hour coverage;
+- field catalog with type, analytical role, measurement level, and description;
+- missing, blank, negative, and repeated-key diagnostics;
+- per-field null rate, minimum, maximum, and observed count;
+- top categorical levels with count and proportion;
+- numeric count, mean, standard deviation, quantiles, and range;
+- numeric correlation matrices;
+- job/model relationship summaries;
+- PCA explained variance and loading tables on bounded analysis samples;
+- a preprocessing plan and pre-write validation table;
+- post-write schema, row-count, and coverage validation.
 
-## Full-file integrity
+## Profile scope
 
-| Dataset | Size (GiB) | Rows | Row groups | Columns |
+Expensive structural checks use the full files and Parquet metadata. Detailed
+diagnostics default to pod Day 0 / Hour 0 and the first 1,000,000 execution
+summary rows so the notebook remains interactive. Correlation and PCA use
+bounded samples.
+
+These bounded results are exploratory diagnostics, not 30-day population
+estimates. Change the profile settings only when a broader scan is necessary
+and sufficient time and storage are available.
+
+## Interpretation rules
+
+- A repeated `pod_id` is not automatically a duplicate because pod-hourly data
+  repeat pods across time and the summary may contain execution spans.
+- Missing GPU utilization can be structural when no GPU was requested.
+- Negative delays are invalid as elapsed-time measurements but remain preserved
+  in raw fields for auditability.
+- Literal `Unknown` and `unknown` values are documented source categories.
+- Highly skewed duration and usage measures should be summarized with medians
+  and quantiles; transformations such as `log1p` belong to a specific model.
+- PCA is exploratory, uses standardized numeric variables, and median-fills
+  only its temporary sample matrix. It does not alter canonical data.
+
+## Validated raw inventory
+
+| Dataset | Rows | Row groups | Columns | Approximate size |
 |---|---:|---:|---:|---:|
-| Pod hourly, Day 0–29 | 33.476 | 842,390,418 | 844 | 25 |
-| Execution summary | 1.107 | 40,522,321 | 346 | 14 |
+| Pod hourly, Day 0–29 | 842,390,418 | 844 | 25 | 33.48 GiB |
+| Execution summary | 40,522,321 | 346 | 14 | 1.11 GiB |
 
-The merged pod file covers all 30 relative days, all 24 hours, and all 720
-day/hour combinations. The integrity assertions passed.
-
-## Quick-profile quality findings
-
-### Pod hourly: Day 0 / Hour 0
-
-- 1,179,029 rows and 1,179,028 distinct pods.
-- `workload_id` is missing in 23.21% of rows; no blank strings were found.
-- `avg_gpu_sm_util` is missing in 94.21% of all rows. This is expected to be
-  strongly affected by the many rows with zero GPU request.
-- Scheduling delay is missing in 2.07% and negative in only 0.0013%.
-- Ready delay is missing in 2.07% and negative in 28.41%.
-- `state_public` is `Unknown` for all rows in this hour, so this field is not
-  informative in the quick pod scope.
-
-### Execution summary: first 1,000,000 rows
-
-- Approximately 99% of rows have distinct pod IDs.
-- `workload_id` is missing in about 88%; no blank strings were found.
-- `duration_hours` is complete and has no negative values.
-- Scheduling delay is missing in about 0.96% and negative in about 0.59%.
-- Ready delay is missing in about 0.96% and negative in about 55.5%.
-
-## Numeric-distribution highlights
-
-The summary duration distribution is strongly right-skewed:
-
-- Median: about 0.43 hours (26 minutes)
-- 75th percentile: about 1.50 hours
-- 99th percentile: about 69.7 hours
-- Maximum: about 1,824 hours (76 days)
-
-Use medians, quantiles, or `log1p(duration_hours)` rather than relying only on
-the mean.
-
-For the pod quick profile, raw `avg_gpu_sm_util` reaches values above 100 and
-raw GPU-memory values can also be very large. These values are retained because
-they may represent multi-GPU aggregation or source-specific measurement rules.
-They must not be silently capped without confirming the field definition.
-
-## Categorical-distribution highlights
-
-In the pod quick profile, `priority_class = Other` accounts for about 77%, while
-about 92.6% of `job_type_public` and 92.8% of `model_type_public` values are
-`unknown`. Only about 3.1% are marked as GenAI requests.
-
-In the summary quick profile, about 82.5% are low priority, 79.3% are offline
-inference jobs, and 77.4% are marked as GenAI requests. These large differences
-reflect different table grains and possibly file-order effects in the bounded
-summary profile; they are diagnostic findings, not evidence of a population
-difference between the two tables.
-
-## Current preprocessing policy
-
-| Field or issue | Rule |
-|---|---|
-| `workload_id` | Trim blank strings to `NULL`; preserve missing values; do not impute. |
-| Negative scheduling delay | Preserve raw value and create `schedule_delay_sec_clean`. |
-| Negative ready delay | Preserve raw value and create `ready_delay_sec_clean`. |
-| `Unknown` categories | Preserve as documented source categories. |
-| Numeric extremes | Retain and profile before applying a research-specific rule. |
-| Missing rows | Do not globally drop rows containing any missing value. |
-
-`workload_id` coverage is approximately 76.8% in the pod quick profile but only
-about 12% in the summary quick profile. Therefore, workload-level joins select
-a limited subset of the summary data. Any combined analysis must report match
-coverage and should aggregate both sources to a declared grain before joining.
-
-## Generated tables
-
-Running `data_pre_process.ipynb` creates the following small files under
-`reports/data_profile/`:
-
-- `file_inventory.csv`
-- `quality_report.csv`
-- `workload_id_coverage.csv`
-- `column_profile.csv`
-- `numeric_distribution.csv`
-- `categorical_distribution.csv`
-
-These files document the profile only. They do not contain the full raw data.
+The merged pod input covers relative days 0–29, hours 0–23, and all 720
+day/hour combinations. Final processed counts depend on the selected workload
+policy and are displayed by the notebook before and after materialization.

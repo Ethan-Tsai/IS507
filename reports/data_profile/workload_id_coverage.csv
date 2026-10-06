@@ -1,3 +1,0 @@
-dataset,row_count,rows_with_workload_id,unique_workloads,coverage_percent
-pod quick profile,1179029,905400,55477,76.79200426791877
-summary quick profile,1000000,120294,35993,12.0294
