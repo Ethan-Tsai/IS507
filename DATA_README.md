@@ -16,19 +16,16 @@ original observations.
 ```text
 MID/
   data/
-    asi_opensource_pod_hourly/
-      day=0/hour=00/part-000.parquet
-      ...
-      day=29/hour=23/part-000.parquet
-    asi_opensource_job_execution_summary/
-      part-000.parquet
+    asi_opensource_pod_hourly_day0_29.parquet
+    asi_opensource_job_execution_summary.parquet
   r_start.R
   data_pre_process.ipynb
 ```
 
-The pod data are partitioned by relative day and hour. `day=0` is the first day
-of the released trace; it is not a calendar date. The summary table is one
-non-partitioned Parquet file.
+Both analysis tables are single Parquet files. The merged pod file has physical
+`day` and `hour` columns. `day=0` is the first relative day of the released
+trace; it is not a calendar date. The data owner may retain the 720 original
+hourly files locally, but the team workflow does not depend on them.
 
 Official references:
 
@@ -125,7 +122,7 @@ column.
    fractional GPU requests. Flag and inspect them first because real cluster
    behavior can be extreme.
 8. Before analysis, report missing counts/rates, numeric minima and maxima,
-   category levels, row grain, and the number of available partitions.
+   category levels, row grain, and day/hour coverage.
 
 ## R usage
 
@@ -152,4 +149,3 @@ summary_ds |>
 
 Avoid `collect()` on all 30 pod days or the complete 40-million-row summary
 unless the machine has enough memory. Select, filter, or aggregate first.
-

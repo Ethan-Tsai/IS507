@@ -13,8 +13,7 @@ ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data"
 DOWNLOAD_DIR = DATA_DIR / ".downloads"
 ZIP_PATH = DOWNLOAD_DIR / "asi_opensource_job_execution_summary.zip"
-TARGET_DIR = DATA_DIR / "asi_opensource_job_execution_summary"
-TARGET_PATH = TARGET_DIR / "part-000.parquet"
+TARGET_PATH = DATA_DIR / "asi_opensource_job_execution_summary.parquet"
 
 URL = (
     "https://tre-clusterdata.oss-cn-hangzhou.aliyuncs.com/"
@@ -81,7 +80,7 @@ def download_with_resume() -> None:
 
 
 def extract_summary() -> None:
-    TARGET_DIR.mkdir(parents=True, exist_ok=True)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
     temporary = TARGET_PATH.with_suffix(".parquet.part")
 
     with zipfile.ZipFile(ZIP_PATH) as archive:
@@ -120,4 +119,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

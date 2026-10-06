@@ -6,9 +6,10 @@ project uses the first 30 relative days (`day=0` through `day=29`) of
 `asi_opensource_pod_hourly` and the complete
 `asi_opensource_job_execution_summary` table.
 
-The large raw Parquet files are not stored in Git. The selected pod-hourly data
-contain 720 Parquet files and occupy about 42.64 GiB; the execution summary is
-about 1.11 GiB.
+The large Parquet files are not stored in Git. The team workflow uses two
+single-file datasets: the 30-day merged pod-hourly table (about 33.48 GiB) and
+the execution summary (about 1.11 GiB). The original 720 hourly files may stay
+on the data owner's machine as a local backup, but teammates do not need them.
 
 ## Repository contents
 
@@ -21,25 +22,23 @@ about 1.11 GiB.
 - `download_and_extract_pod_days.py`: resumable selective downloader for
   pod-hourly day 0–29.
 - `download_job_summary.py`: resumable downloader for the execution summary.
+- `package_team_data.py`: packages the two analysis files into one shareable
+  ZIP without recompressing Parquet.
 - `data/pod_day_ranges_0_29.json`: fixed byte-range manifest for the selected
   30 days.
 - `data/samples/`: small day-0 sample for testing code only.
 
 ## Getting the raw data
 
-### Option A: UIUC Box
+### Option A: team ZIP from UIUC Box
 
-The group dataset is available through the UIUC Box folder shared in the group
-chat. Download and extract it so the local structure is:
+Download `IS507_alibaba_gpu_data_day0_29.zip` from the team's UIUC Box folder
+and extract it into the repository root. The ZIP creates this layout:
 
 ```text
 data/
-  asi_opensource_pod_hourly/
-    day=0/hour=00/part-000.parquet
-    ...
-    day=29/hour=23/part-000.parquet
-  asi_opensource_job_execution_summary/
-    part-000.parquet
+  asi_opensource_pod_hourly_day0_29.parquet
+  asi_opensource_job_execution_summary.parquet
 ```
 
 The Box shared URL is intentionally not committed here. Group members should
@@ -54,9 +53,9 @@ after an interrupted connection:
 python download_data.py
 ```
 
-Expect approximately 44 GiB of downloaded/extracted data. Keep the computer
-awake until the script reports completion. Re-running the command skips valid,
-completed files.
+This rebuilds the same two team files while retaining the 720 pod-hourly source
+partitions locally. Keep the computer awake until the script reports
+completion. Re-running the command skips valid, completed files.
 
 ### Create one Parquet file for sharing
 
@@ -76,21 +75,26 @@ data/asi_opensource_pod_hourly_day0_29.parquet
 It contains all original pod-hourly fields plus physical integer columns
 `day` (0–29) and `hour` (0–23). The script validates all 720 input partitions,
 the complete row count, and day/hour coverage before accepting the output.
-The merged file is ignored by Git and should be distributed through UIUC Box.
+The two single-file datasets are ignored by Git and should be distributed
+through UIUC Box.
 
 The Parquet file already uses ZSTD compression. Uploading the `.parquet` file
 directly is normally faster than creating a ZIP and usually produces almost
 the same file size. If an archive is required, archive only this merged file;
 do not include `.venv/`, the 720 source files, or `.duckdb_tmp/`.
 
-After downloading the shared file, a teammate can place it at:
+`r_start.R` and `data_pre_process.ipynb` read only these two single-file
+datasets. They do not require or inspect the 720 hourly source files.
 
-```text
-data/asi_opensource_pod_hourly_day0_29.parquet
+To rebuild the one-file team package, run:
+
+```powershell
+python package_team_data.py
 ```
 
-`r_start.R` automatically uses the 720 partitioned files when present and
-otherwise falls back to this single merged file.
+This creates `data/IS507_alibaba_gpu_data_day0_29.zip`. Extract the ZIP into the
+repository root; it includes the `data/` directory prefix. The ZIP uses store
+mode because the Parquet contents are already ZSTD-compressed.
 
 Official references:
 

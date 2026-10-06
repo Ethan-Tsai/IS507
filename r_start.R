@@ -19,43 +19,24 @@ if (!dir.exists(file.path(project_root, "data")) &&
 }
 
 data_dir <- file.path(project_root, "data")
-pod_dir <- file.path(data_dir, "asi_opensource_pod_hourly")
 pod_merged_file <- file.path(
   data_dir,
   "asi_opensource_pod_hourly_day0_29.parquet"
 )
-summary_file <- file.path(
-  data_dir,
-  "asi_opensource_job_execution_summary",
-  "part-000.parquet"
-)
+summary_file <- file.path(data_dir, "asi_opensource_job_execution_summary.parquet")
 
-# Compatibility with the earlier local layout.
-if (!file.exists(summary_file)) {
-  summary_file <- file.path(data_dir, "part-000.parquet")
-}
-
-stopifnot(dir.exists(pod_dir) || file.exists(pod_merged_file))
+stopifnot(file.exists(pod_merged_file))
 stopifnot(file.exists(summary_file))
 
 # open_dataset() is lazy: it reads metadata now, not all rows into RAM.
-# Prefer the partitioned layout when it is available because Arrow can skip
-# entire day/hour directories. Teammates who receive only the merged file can
-# run the same examples because that file already contains day and hour.
-if (dir.exists(pod_dir)) {
-  pod_source <- "720 partitioned Parquet files"
-  pod_ds <- open_dataset(
-    pod_dir,
-    format = "parquet",
-    partitioning = "hive"
-  )
-} else {
-  pod_source <- "one merged Parquet file"
-  pod_ds <- open_dataset(pod_merged_file, format = "parquet")
-}
+# The team workflow always uses the two shared single-file Parquet datasets.
+# The 720 hourly source files may remain on the data owner's machine, but this
+# script never depends on them.
+pod_ds <- open_dataset(pod_merged_file, format = "parquet")
 summary_ds <- open_dataset(summary_file, format = "parquet")
 
-message("Pod source: ", pod_source)
+message("Pod source: ", pod_merged_file)
+message("Summary source: ", summary_file)
 print(pod_ds$schema)
 print(summary_ds$schema)
 
