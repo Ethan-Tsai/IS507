@@ -78,6 +78,20 @@ It contains all original pod-hourly fields plus physical integer columns
 the complete row count, and day/hour coverage before accepting the output.
 The merged file is ignored by Git and should be distributed through UIUC Box.
 
+The Parquet file already uses ZSTD compression. Uploading the `.parquet` file
+directly is normally faster than creating a ZIP and usually produces almost
+the same file size. If an archive is required, archive only this merged file;
+do not include `.venv/`, the 720 source files, or `.duckdb_tmp/`.
+
+After downloading the shared file, a teammate can place it at:
+
+```text
+data/asi_opensource_pod_hourly_day0_29.parquet
+```
+
+`r_start.R` automatically uses the 720 partitioned files when present and
+otherwise falls back to this single merged file.
+
 Official references:
 
 - [Dataset download](https://github.com/alibaba/clusterdata/blob/master/cluster-trace-gpu-v2026/docs/data_download.md)
