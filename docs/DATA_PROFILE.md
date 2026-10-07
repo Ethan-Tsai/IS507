@@ -17,6 +17,8 @@ The notebook produces:
 - numeric count, mean, standard deviation, quantiles, and range;
 - numeric correlation matrices;
 - job/model relationship summaries;
+- KuLC association tables with support, bidirectional confidence, lift, and
+  imbalance ratio;
 - PCA explained variance and loading tables on bounded analysis samples;
 - a preprocessing plan and pre-write validation table;
 - post-write schema, row-count, and coverage validation.

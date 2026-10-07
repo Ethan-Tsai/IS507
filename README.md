@@ -55,13 +55,17 @@ mode to avoid slow and ineffective recompression.
 
 ## Python setup
 
-Python 3.11 or newer is recommended.
+Python 3.12 is recommended. The project-local `.venv` is the intended Python
+and Jupyter environment.
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 ```
+
+In VS Code, select `.venv\Scripts\python.exe` as the Python interpreter and
+choose the corresponding `Python 3 (ipykernel)` notebook kernel.
 
 ## R setup
 
