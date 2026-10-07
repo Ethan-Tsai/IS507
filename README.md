@@ -5,7 +5,7 @@ This repository contains the final preprocessing workflow and the R entry points
 ## Quick start
 
 1. **Get the code:** on GitHub, select **Code → Download ZIP**, extract it, and open the repository folder; Git users may clone the repository instead.
-2. **Get the data:** download `IS507_processed_data.zip` from [UIUC Box](ADD_UIUC_BOX_LINK_HERE), move it into the repository root, and extract it there so the two files appear under `data/processed/`.
+2. **Get the data:** download `IS507_processed_data.zip` from [UIUC Box](https://uofi.box.com/s/gc7mur0i379lw8qdqgpqa7xb7cm4vs65), move it into the repository root, and extract it there so the two files appear under `data/processed/`.
 3. **Start R:** open `IS507.Rproj` or set R to the repository root, then run `source("r_setup.R")`; the script installs missing packages, validates both files, and creates the lazy `pod` and `summary` datasets.
 
 Use [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md) for the exact commands and cleaning rules, and begin every R session with the same `source("r_setup.R")` command; filter or aggregate before calling `collect()`.
