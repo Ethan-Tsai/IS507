@@ -12,6 +12,11 @@ Thumbs.db
 .vscode/*
 !.vscode/settings.json
 .idea/
+.Rproj.user/
+.r-library/
+.Rhistory
+.RData
+Rplots.pdf
 
 # Logs and temporary downloads
 *.log

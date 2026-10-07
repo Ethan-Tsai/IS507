@@ -11,7 +11,7 @@ MID/
       asi_opensource_pod_hourly_processed.parquet
       asi_opensource_job_execution_summary_processed.parquet
   data_pre_process.ipynb
-  r_start.R
+  r_setup.R
 ```
 
 The two files directly under `data/` are immutable preprocessing inputs. The
@@ -51,7 +51,7 @@ without silently replacing the corresponding raw fields.
 Extract `IS507_processed_data.zip` into the repository root and run:
 
 ```r
-source("r_start.R")
+source("r_setup.R")
 ```
 
 This creates two lazy Arrow datasets:
